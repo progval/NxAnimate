@@ -1,0 +1,30 @@
+html, body {
+    /* Remove all the margins and stuff. */
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+#container {
+    /* Big table used as layout for the page. */
+    height: 100%;
+    width: 100%;
+}
+#header-row, #buttons-row {
+    /* Height as small as possible so there is space for the source code and the graph. */
+    height: 1px;
+    max-height: 25%;
+}
+#source-code {
+    /* Width as small as possible, so there is space for the graph. */
+    width: 10%;
+    max-width: 50%; /* TODO: Make it 80-columns? */
+
+    /* Show a vertical scrollbar if the source code is too long/large. */
+    overflow: auto;
+}
+#graph-editor {
+    /* Where the graph is displayed. */
+    height: 100%;
+    width: 100%;
+}
