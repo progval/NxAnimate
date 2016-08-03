@@ -13,6 +13,7 @@ setup(
         package_data={
             'nxanimate.gui': [
                 'client-resources/animator.js',
+                'client-resources/sigma.js',
                 'client-resources/style.css',
                 'client-resources/index.html',
                 ],
@@ -31,10 +32,7 @@ setup(
             'License :: OSI Approved :: BSD License',
             'Operating System :: OS Independent',
             'Programming Language :: JavaScript',
-            'Programming Language :: Python :: 3.3',
-            'Programming Language :: Python :: 3.4',
-            'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3 :: Only',
             'Topic :: Education',
             'Topic :: Scientific/Engineering :: Visualization',
             ],
