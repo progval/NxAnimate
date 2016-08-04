@@ -29,7 +29,18 @@
             </tr>
             <tr id="buttons-row">
                 <td>TODO: debugger buttons</td>
-                <td>TODO: graph buttons</td>
+                <td>
+                    <form>
+                        Edit mode:
+
+                        <input type="radio" name="edit-mode" id="edit-mode-off" onchange="edit_mode=false;" checked="checked" />
+                        <label for="edit-mode-off">Off</label>
+
+                        <input type="radio" name="edit-mode" id="edit-mode-on" onchange="edit_mode=true;" />
+                        <label for="edit-mode-on">On</label>
+
+                    </form>
+                </td>
             </tr>
         </table>
     </body>

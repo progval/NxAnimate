@@ -13,6 +13,11 @@ class WebSocketHandler(WebSocket):
         self.controller = controller
         super().__init__(*args, **kwargs)
 
+    def send(self, method, arg):
+        content = method + ' ' + json.dumps(arg)
+        print('Sent message: {}'.format(content))
+        super().send(content)
+
     def received_message(self, message):
         content = message.data.decode()
         print('Received message: {}'.format(content))
@@ -28,7 +33,7 @@ class WebSocketHandler(WebSocket):
             if not getattr(method, 'exposed', False):
                 raise AttributeError()
         except AttributeError:
-            self.send('Unknown method: {}'.format(method_name))
+            self.send('unknown_method', method_name)
             return
 
         method(arg)
@@ -37,6 +42,25 @@ class WebSocketHandler(WebSocket):
     def request_redraw_graph(self, arg):
         assert arg is None
         graph = self.controller.get_graph()
-        s = 'redraw_graph ' + serialize_graph(graph)
-        print(s)
-        self.send(s)
+        self.send('redraw_graph', serialize_graph(graph))
+
+    @expose
+    def request_add_node(self, arg):
+        assert isinstance(arg, dict)
+        graph = self.controller.get_graph()
+        x = arg.pop('x')
+        y = arg.pop('y')
+        id_ = self.controller.add_node(x, y)
+        self.send('add_node', serialize_node(id_, {'x': x, 'y': y}))
+
+
+    @expose
+    def request_add_edge(self, arg):
+        assert isinstance(arg, dict)
+        graph = self.controller.get_graph()
+        source = arg.pop('source')
+        target = arg.pop('target')
+        (key, attrs) = self.controller.add_edge(source, target)
+        if key is not None:
+            self.send('add_edge', serialize_edge(source, target, key, attrs))
+
