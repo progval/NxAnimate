@@ -10,8 +10,9 @@ def expose(f):
 
 class WebSocketHandler(WebSocket):
     def __init__(self, *args, controller, **kwargs):
-        self.controller = controller
         super().__init__(*args, **kwargs)
+        self.controller = controller
+        controller.add_gui(self)
 
     def send(self, method, arg):
         content = method + ' ' + json.dumps(arg)
@@ -53,7 +54,6 @@ class WebSocketHandler(WebSocket):
         id_ = self.controller.add_node(x, y)
         self.send('add_node', serialize_node(id_, {'x': x, 'y': y}))
 
-
     @expose
     def request_add_edge(self, arg):
         assert isinstance(arg, dict)
@@ -64,3 +64,15 @@ class WebSocketHandler(WebSocket):
         if key is not None:
             self.send('add_edge', serialize_edge(source, target, key, attrs))
 
+    @expose
+    def run(self, arg):
+        assert arg is None
+        self.controller.run()
+
+    @expose
+    def step(self, arg):
+        assert arg is None
+        self.controller.step()
+
+    def set_line(self, lineno):
+        self.send('set_lineno', lineno)

@@ -22,6 +22,7 @@ setup(
             'networkx',
             'ws4py',
             'cherrypy',
+            'pygments>=1.6',
             ],
         classifiers=[
             'Development Status :: 1 - Planning',

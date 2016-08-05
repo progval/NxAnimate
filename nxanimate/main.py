@@ -7,4 +7,7 @@ def main():
     gui_config = gen_gui_config(
             controller=controller,
             )
-    gui_start(config=gui_config)
+    gui_start(
+            controller=controller,
+            config=gui_config,
+            )

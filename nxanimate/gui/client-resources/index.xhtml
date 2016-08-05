@@ -7,6 +7,7 @@
         <script type="text/javascript" src="./static/sigma.js"></script>
         <script type="text/javascript" src="./static/animator.js"></script>
         <link rel="stylesheet" type="text/css" href="./static/style.css" />
+        <link rel="stylesheet" type="text/css" href="./highlight.css" />
     </head>
     <body onload="main();">
         <noscript>
@@ -24,21 +25,41 @@
                 <th>Graph</th>
             </tr>
             <tr id="main-row">
-                <td id="source-code">TODO: source code</td>
+                <td id="source-code-cell">
+                    {{sourcecode}}
+                </td>
                 <td><div id="graph-editor"> </div></td>
             </tr>
             <tr id="buttons-row">
-                <td>TODO: debugger buttons</td>
-                <td>
+                <td id="debugger-buttons">
                     <form>
-                        Edit mode:
+                        <div class="button-group">
+                            <input type="button" value="Run" onclick="on_click_run();" />
+                            <input type="button" value="Step" onclick="on_click_step();" />
 
-                        <input type="radio" name="edit-mode" id="edit-mode-off" onchange="edit_mode=false;" checked="checked" />
-                        <label for="edit-mode-off">Off</label>
+                            TODO: other buttons
+                        </div>
 
-                        <input type="radio" name="edit-mode" id="edit-mode-on" onchange="edit_mode=true;" />
-                        <label for="edit-mode-on">On</label>
+                        <div class="button-group">
+                            Run mode: <!-- TODO: check the default run mode based on the server's config -->
+                            <input type="radio" name="run-mode" id="run-mode-line" onchange="on_run_mode_line();" checked="checked" />
+                            <label for="run-mode-line">Line-by-line</label>
+                            <input type="radio" name="run-mode" id="run-mode-breakpoint" onchange="on_run_mode_breakpoint();" />
+                            <label for="run-mode-breakpoint">Pause on breakpoints</label>
+                        </div>
+                    </form>
+                </td>
+                <td id="graph-buttons">
+                    <form>
+                        <div class="button-group">
+                            Edit mode:
 
+                            <input type="radio" name="edit-mode" id="edit-mode-off" onchange="edit_mode=false;" checked="checked" />
+                            <label for="edit-mode-off">Off</label>
+
+                            <input type="radio" name="edit-mode" id="edit-mode-on" onchange="edit_mode=true;" />
+                            <label for="edit-mode-on">On</label>
+                        </div>
                     </form>
                 </td>
             </tr>

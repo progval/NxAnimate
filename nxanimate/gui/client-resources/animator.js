@@ -5,6 +5,7 @@ var ws; /* WebSocket */
 var S; /* Main Sigma.js object */
 var edit_mode = false;
 var selected_node = undefined; /* Candidate as edge source. */
+var current_line = undefined;
 
 /************************************************
  * Sigma events
@@ -77,6 +78,28 @@ function add_edge(edge) {
 }
 
 /************************************************
+ * Debugger
+ ************************************************/
+
+function on_click_run() {
+    ws.send("run");
+}
+
+function on_click_step() {
+    ws.send("step");
+}
+
+function on_set_lineno(arg) {
+    var lineno = arg;
+    var line = document.getElementById("line-" + lineno);
+    if (typeof current_line != "undefined") {
+        current_line.classList.remove("highlighted-line");
+    }
+    line.classList.add("highlighted-line");
+    current_line = line;
+}
+
+/************************************************
  * Networking
  ************************************************/
 
@@ -96,6 +119,9 @@ function on_socket_event(event) {
             break;
         case "add_edge":
             add_edge(argument);
+            break;
+        case "set_lineno":
+            on_set_lineno(argument);
             break;
         default:
             console.log("Unknown event type: " + event_type);

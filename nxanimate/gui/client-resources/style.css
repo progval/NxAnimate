@@ -15,16 +15,28 @@ html, body {
     height: 1px;
     max-height: 25%;
 }
-#source-code {
+#source-code-cell {
     /* Width as small as possible, so there is space for the graph. */
-    width: 10%;
+    width: 5%;
     max-width: 50%; /* TODO: Make it 80-columns? */
 
     /* Show a vertical scrollbar if the source code is too long/large. */
     overflow: auto;
 }
+.highlighted-line {
+    background-color: red;
+}
 #graph-editor {
     /* Where the graph is displayed. */
     height: 100%;
     width: 100%;
+}
+
+.button-group {
+    /* Group of buttons we want to be on the same line */
+    display: inline-block;
+    white-space: nowrap;
+}
+#graph-buttons {
+    text-align: right;
 }

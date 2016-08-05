@@ -3,6 +3,8 @@ import functools
 
 import cherrypy
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
+
+from .highlighting import highlight, get_highlight_css
 from .websocket_handler import WebSocketHandler
 
 PORT = 8000
@@ -13,14 +15,26 @@ WebSocketPlugin(cherrypy.engine).subscribe()
 cherrypy.tools.websocket = WebSocketTool()
 
 class Root(object):
+    def __init__(self, controller):
+        self.controller = controller
+        super().__init__()
+
     @cherrypy.expose
     def index(self):
+        source_code = self.controller.get_source_code()
+        source_code = highlight(source_code).encode()
         cherrypy.response.headers['Content-Type'] = 'application/xhtml+xml'
         with open(os.path.join(RESOURCES_PATH, 'index.xhtml'), 'rb') as fd:
-            return fd.read()
+            return fd.read().replace(b'{{sourcecode}}', source_code)
+
+    @cherrypy.expose('highlight.css')
+    def highlight(self):
+        cherrypy.response.headers['Content-Type'] = 'text/css'
+        return get_highlight_css()
 
     @cherrypy.expose('config.js')
     def config(self):
+        cherrypy.response.headers['Content-Type'] = 'text/javascript'
         return 'websocket_url = "ws://localhost:{}/websocket";'.format(PORT).encode()
 
     @cherrypy.expose
@@ -44,5 +58,5 @@ def gen_config(*, controller):
                 },
             }
 
-def start(config=None):
-    cherrypy.quickstart(Root(), '/', config=config)
+def start(controller, config=None):
+    cherrypy.quickstart(Root(controller), '/', config=config)

@@ -1,9 +1,24 @@
+import tempfile
+
 import networkx
+
+from .debugger.debugger import Debugger
 
 class Controller:
     def __init__(self):
         self._last_node_id = -1
+        self.guis = []
         self.load_graph()
+        self.script = tempfile.NamedTemporaryFile('at')
+        self.script.write(self.get_source_code())
+        self.script.flush()
+        self.debugger = Debugger(self.script.name, self)
+
+    def __del__(self):
+        self.script.close()
+
+    def add_gui(self, gui):
+        self.guis.append(gui)
 
     def load_graph(self):
         g = networkx.Graph()
@@ -16,6 +31,9 @@ class Controller:
 
     def get_graph(self):
         return self.graph
+
+    def get_source_code(self):
+        return 'for x in range(10):\n    print(x)\n'
 
     def add_node(self, x, y):
         attrs = {'x': x, 'y': y}
@@ -35,3 +53,15 @@ class Controller:
         else:
             self.graph.add_edge(source, target)
             return (0, {})
+
+    def run(self):
+        """Run the script in the debugger."""
+        self.debugger.run()
+
+    def step(self):
+        """Run a line of the script in the debugger."""
+        self.debugger.step()
+
+    def on_dbg_line(self, lineno):
+        for gui in self.guis:
+            gui.set_line(lineno)
