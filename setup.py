@@ -8,7 +8,7 @@ setup(
         description='Graph algorithms animation tool. Like Gato, but based on NetworkX.',
         author='Valentin Lorentz',
         author_email='progval+nxanimate@progval.net',
-        url='https://github.com/ProgVal/nxanimate',
+        url='https://github.com/ProgVal/NxAnimate',
         packages=['nxanimate', 'nxanimate.gui'],
         package_data={
             'nxanimate.gui': [
@@ -22,7 +22,7 @@ setup(
             'networkx',
             'ws4py',
             'cherrypy',
-            'pygments>=1.6',
+            'pygments (>=1.6)',
             ],
         classifiers=[
             'Development Status :: 1 - Planning',
