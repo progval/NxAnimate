@@ -34,18 +34,8 @@
                 <td id="debugger-buttons">
                     <form>
                         <div class="button-group">
-                            <input type="button" value="Run" onclick="on_click_run();" />
                             <input type="button" value="Step" onclick="on_click_step();" />
-
-                            TODO: other buttons
-                        </div>
-
-                        <div class="button-group">
-                            Run mode: <!-- TODO: check the default run mode based on the server's config -->
-                            <input type="radio" name="run-mode" id="run-mode-line" onchange="on_run_mode_line();" checked="checked" />
-                            <label for="run-mode-line">Line-by-line</label>
-                            <input type="radio" name="run-mode" id="run-mode-breakpoint" onchange="on_run_mode_breakpoint();" />
-                            <label for="run-mode-breakpoint">Pause on breakpoints</label>
+                            <input type="button" value="To next breakpoint" onclick="on_click_next_breakpoint();" />
                         </div>
                     </form>
                 </td>

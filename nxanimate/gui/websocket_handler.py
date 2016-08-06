@@ -65,14 +65,24 @@ class WebSocketHandler(WebSocket):
             self.send('add_edge', serialize_edge(source, target, key, attrs))
 
     @expose
-    def run(self, arg):
-        assert arg is None
-        self.controller.run()
-
-    @expose
     def step(self, arg):
         assert arg is None
         self.controller.step()
 
+    @expose
+    def cont(self, arg):
+        assert arg is None
+        self.controller.continue_()
+
     def set_line(self, lineno):
+        # Called from the controller
         self.send('set_lineno', lineno)
+
+    @expose
+    def flip_breakpoint(self, lineno):
+        if self.controller.has_breakpoint(lineno):
+            self.send('remove_breakpoint', lineno)
+            self.controller.remove_breakpoint(lineno)
+        else:
+            self.send('add_breakpoint', lineno)
+            self.controller.add_breakpoint(lineno)

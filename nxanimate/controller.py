@@ -33,7 +33,7 @@ class Controller:
         return self.graph
 
     def get_source_code(self):
-        return 'for x in range(10):\n    print(x)\n'
+        return 'print("a")\nprint("b")\nprint("c")\nprint("d")\nfor x in range(10):\n    print(x)\n'
 
     def add_node(self, x, y):
         attrs = {'x': x, 'y': y}
@@ -54,14 +54,26 @@ class Controller:
             self.graph.add_edge(source, target)
             return (0, {})
 
-    def run(self):
-        """Run the script in the debugger."""
-        self.debugger.run()
-
     def step(self):
         """Run a line of the script in the debugger."""
         self.debugger.step()
 
+    def continue_(self):
+        """Run the script in the debugger, until a breakpoint is met."""
+        self.debugger.continue_()
+
     def on_dbg_line(self, lineno):
         for gui in self.guis:
             gui.set_line(lineno)
+
+
+    def has_breakpoint(self, lineno):
+        return self.debugger.has_breakpoint(lineno)
+
+    def add_breakpoint(self, lineno):
+        assert not self.has_breakpoint(lineno)
+        self.debugger.add_breakpoint(lineno)
+
+    def remove_breakpoint(self, lineno):
+        assert self.has_breakpoint(lineno)
+        self.debugger.remove_breakpoint(lineno)

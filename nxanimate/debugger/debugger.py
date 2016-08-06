@@ -3,26 +3,54 @@ import threading
 
 from .script_loader import load_script
 
-class Debugger(bdb.Bdb):
-    def __init__(self, file_name, controller):
-        self._code = load_script(file_name)
-        self._controller = controller
-        self._release_line = threading.Event()
+class NxAnimateBdb(bdb.Bdb):
+    def __init__(self, release_line, line_callback):
         super().__init__()
-        self.set_step()
-
-    def run(self):
-        self.thread = threading.Thread(target=super().run, args=(self._code,))
-        self.thread.start()
+        self.stepping = True
+        self.continue_execution = release_line
+        self._line_callback = line_callback
 
     def is_skipped_module(self, module_name):
-        print(module_name)
         return module_name.startswith('nxanimate.script')
 
     def user_line(self, frame):
-        self._release_line.clear()
-        self._controller.on_dbg_line(frame.f_lineno)
-        self._release_line.wait()
+        self.continue_execution.clear()
+        if self.stepping or self.break_here(frame):
+            self._line_callback(frame.f_lineno)
+            self.continue_execution.wait() # Wait before going to the next line
+
+class Debugger:
+    def __init__(self, file_name, controller):
+        self._file_name = file_name
+        self._code = load_script(file_name)
+        self._controller = controller
+        self._thread = None
+
+        self.continue_execution = threading.Event()
+        self._bdb = NxAnimateBdb(self.continue_execution, self._controller.on_dbg_line)
+        self._bdb.set_step()
+
+    def _run(self):
+        self._thread = threading.Thread(target=self._bdb.run, args=(self._code,))
+        self._thread.start()
 
     def step(self):
-        self._release_line.set()
+        self._bdb.stepping = True
+        self.continue_execution.set()
+        if not self._thread:
+            self._run()
+
+    def continue_(self):
+        self._bdb.stepping = False
+        self.continue_execution.set()
+        if not self._thread:
+            self._run()
+
+    def has_breakpoint(self, lineno):
+        return self._bdb.get_break(self._file_name, lineno)
+
+    def add_breakpoint(self, lineno):
+        self._bdb.set_break(self._file_name, lineno)
+
+    def remove_breakpoint(self, lineno):
+        self._bdb.clear_break(self._file_name, lineno)

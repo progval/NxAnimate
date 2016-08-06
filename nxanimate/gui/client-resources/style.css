@@ -1,3 +1,6 @@
+/**************************************************
+ * Global stuff
+ **************************************************/
 html, body {
     /* Remove all the margins and stuff. */
     height: 100%;
@@ -5,16 +8,19 @@ html, body {
     margin: 0;
     padding: 0;
 }
+
 #container {
     /* Big table used as layout for the page. */
     height: 100%;
     width: 100%;
 }
+
 #header-row, #buttons-row {
     /* Height as small as possible so there is space for the source code and the graph. */
     height: 1px;
     max-height: 25%;
 }
+
 #source-code-cell {
     /* Width as small as possible, so there is space for the graph. */
     width: 5%;
@@ -23,14 +29,45 @@ html, body {
     /* Show a vertical scrollbar if the source code is too long/large. */
     overflow: auto;
 }
+
+
+/**************************************************
+ * Line numbers
+ **************************************************/
+
+.linenos span {
+    cursor: pointer;
+}
+
+.linenos a {
+    /* Don't show it's an anchor. */
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.linenos .breakpoint {
+    background-color: red;
+}
+
 .highlighted-line {
     background-color: red;
 }
+
+
+/**************************************************
+ * Graph editor
+ **************************************************/
+
 #graph-editor {
     /* Where the graph is displayed. */
     height: 100%;
     width: 100%;
 }
+
+
+/**************************************************
+ * Buttons
+ **************************************************/
 
 .button-group {
     /* Group of buttons we want to be on the same line */

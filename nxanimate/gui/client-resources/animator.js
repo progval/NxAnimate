@@ -81,12 +81,37 @@ function add_edge(edge) {
  * Debugger
  ************************************************/
 
-function on_click_run() {
-    ws.send("run");
+function on_click_lineno() {
+    /* Find which of the line numbers was clicks */
+    var element = window.event.target;
+    var tokens = element.id.split("-");
+    var prefix=tokens[0], lineno_str=tokens[1];
+    if (prefix != "lineno") {
+        /* uh? */
+        console.log("on_click_lineno called, but not on a lineno:")
+        console.log(element)
+    }
+    var lineno = parseInt(lineno_str, 10);
+    ws.send("flip_breakpoint " + lineno);
+}
+
+function on_add_breakpoint(arg) {
+    var lineno = arg;
+    var element = document.getElementById("lineno-" + lineno);
+    element.classList.add("breakpoint");
+}
+function on_remove_breakpoint(arg) {
+    var lineno = arg;
+    var element = document.getElementById("lineno-" + lineno);
+    element.classList.remove("breakpoint");
 }
 
 function on_click_step() {
     ws.send("step");
+}
+
+function on_click_next_breakpoint() {
+    ws.send("cont");
 }
 
 function on_set_lineno(arg) {
@@ -122,6 +147,12 @@ function on_socket_event(event) {
             break;
         case "set_lineno":
             on_set_lineno(argument);
+            break;
+        case "add_breakpoint":
+            on_add_breakpoint(argument);
+            break;
+        case "remove_breakpoint":
+            on_remove_breakpoint(argument);
             break;
         default:
             console.log("Unknown event type: " + event_type);
