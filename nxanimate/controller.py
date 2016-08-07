@@ -40,7 +40,7 @@ class Controller:
         self._last_node_id += 1
         while self.graph.has_node(self._last_node_id):
             self._last_node_id += 1
-        self.graph.add_node(self._last_node_id)
+        self.graph.add_node(self._last_node_id, **attrs)
         return self._last_node_id
 
     def add_edge(self, source, target):

@@ -161,9 +161,14 @@ function on_socket_event(event) {
 
 function main() {
     S = new sigma({
-        container: "graph-editor",
+        renderer: {
+            container: document.getElementById("graph-editor"),
+            type: "canvas"
+        },
         settings: {
-            autoRescale: false
+            enableCamera: false,
+            autoRescale: false,
+            minArrowSize: 5
             }});
     bind_sigma_events();
     ws = new WebSocket(websocket_url);
