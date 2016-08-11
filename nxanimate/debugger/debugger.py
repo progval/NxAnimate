@@ -14,6 +14,8 @@ class NxAnimateBdb(bdb.Bdb):
         return module_name.startswith('nxanimate.script')
 
     def user_line(self, frame):
+        if not frame.f_globals.get('__NxAnimate_debugged_script', False):
+            return
         self.continue_execution.clear()
         if self.stepping or self.break_here(frame):
             self._line_callback(frame.f_lineno)
@@ -23,15 +25,17 @@ class Debugger:
     def __init__(self, file_name, controller):
         self._file_name = file_name
         self._code = load_script(file_name)
-        self._controller = controller
+        self.controller = controller
         self._thread = None
 
         self.continue_execution = threading.Event()
-        self._bdb = NxAnimateBdb(self.continue_execution, self._controller.on_dbg_line)
+        self._bdb = NxAnimateBdb(self.continue_execution, self.controller.on_dbg_line)
         self._bdb.set_step()
 
     def _run(self):
-        self._thread = threading.Thread(target=self._bdb.run, args=(self._code,))
+        globals_env = {'G': self.controller.graph, '__NxAnimate_debugged_script': True}
+        self._thread = threading.Thread(target=self._bdb.run,
+                args=(self._code,), kwargs={'globals': globals_env})
         self._thread.start()
 
     def step(self):

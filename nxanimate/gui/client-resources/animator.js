@@ -66,6 +66,10 @@ function add_node(node) {
     S.graph.addNode(node);
     S.refresh();
 }
+function remove_node(node) {
+    S.graph.dropNode(node);
+    S.refresh();
+}
 
 function request_add_edge(source, target) {
     ws.send("request_add_edge " + JSON.stringify({"source": source, "target": target}));
@@ -141,6 +145,9 @@ function on_socket_event(event) {
             break;
         case "add_node":
             add_node(argument);
+            break;
+        case "remove_node":
+            remove_node(argument);
             break;
         case "add_edge":
             add_edge(argument);

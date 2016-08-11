@@ -32,6 +32,7 @@ def get_graph_edges_with_keys(graph):
     if graph.is_multigraph():
         return graph.edges(data=True, keys=True)
     else:
+        print(list(graph.edges(data=True)))
         return ((u,v,0,data) for (u,v,data) in graph.edges(data=True))
 
 def serialize_edge(source, target, key, attrs):

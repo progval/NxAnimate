@@ -42,26 +42,32 @@ class WebSocketHandler(WebSocket):
     @expose
     def request_redraw_graph(self, arg):
         assert arg is None
-        graph = self.controller.get_graph()
+        graph = self.controller.graph
         self.send('redraw_graph', serialize_graph(graph))
 
     @expose
     def request_add_node(self, arg):
         assert isinstance(arg, dict)
-        graph = self.controller.get_graph()
+        graph = self.controller.graph
         x = arg.pop('x')
         y = arg.pop('y')
         id_ = self.controller.add_node(x, y)
+
+    def add_node(self, id_, x, y):
         self.send('add_node', serialize_node(id_, {'x': x, 'y': y}))
+
+    def remove_node(self, id_):
+        self.send('remove_node', id_)
 
     @expose
     def request_add_edge(self, arg):
         assert isinstance(arg, dict)
-        graph = self.controller.get_graph()
+        graph = self.controller.graph
         source = arg.pop('source')
         target = arg.pop('target')
-        (key, attrs) = self.controller.add_edge(source, target)
-        if key is not None:
+        res = self.controller.add_edge(source, target)
+        if res is not None:
+            (key, attrs) = res
             self.send('add_edge', serialize_edge(source, target, key, attrs))
 
     @expose
