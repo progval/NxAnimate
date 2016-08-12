@@ -63,12 +63,13 @@ class WebSocketHandler(WebSocket):
     def request_add_edge(self, arg):
         assert isinstance(arg, dict)
         graph = self.controller.graph
-        source = arg.pop('source')
-        target = arg.pop('target')
-        res = self.controller.add_edge(source, target)
+        print(arg)
+        from_ = arg.pop('from')
+        to = arg.pop('to')
+        res = self.controller.add_edge(from_, to)
         if res is not None:
             (key, attrs) = res
-            self.send('add_edge', serialize_edge(source, target, key, attrs))
+            self.send('add_edge', serialize_edge(from_, to, key, attrs))
 
     @expose
     def step(self, arg):

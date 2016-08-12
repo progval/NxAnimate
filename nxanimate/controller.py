@@ -45,15 +45,15 @@ class Controller:
         self.graph.add_node(self._last_node_id, **attrs)
         return self._last_node_id
 
-    def add_edge(self, source, target):
+    def add_edge(self, from_, to):
         """Add an edge, return (id, attrs) if it does not exist,
         None otherwise."""
         if self.graph.is_multigraph():
-            return (self.graph.add_edge(source, target), {})
-        elif self.graph.has_edge(source, target):
+            return (self.graph.add_edge(from_, to), {})
+        elif self.graph.has_edge(from_, to):
             return None # The edge already exists, nothing to do
         else:
-            self.graph.add_edge(source, target)
+            self.graph.add_edge(from_, to)
             return (0, {})
 
     def step(self):

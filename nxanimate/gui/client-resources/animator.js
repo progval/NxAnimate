@@ -2,7 +2,7 @@
 
 var graph;
 var ws; /* WebSocket */
-var S; /* Main Sigma.js object */
+var network; /* Main vis-network object */
 var edit_mode = false;
 var selected_node = undefined; /* Candidate as edge source. */
 var current_line = undefined;
@@ -11,29 +11,36 @@ var current_line = undefined;
  * Sigma events
  ************************************************/
 
-function bind_sigma_events() {
-    S.bind("clickNode", on_click_node);
-    S.bind("clickStage", on_click_stage);
+function bind_vis_events() {
+    network.on("click", on_click);
 }
 
-function on_click_stage(event) {
+function on_click(event) {
     if (!edit_mode)
         return;
-    var captor = event.data.captor;
-    request_add_node(captor.x, captor.y);
+    if (event.nodes.length == 1) {
+        on_click_node(event.nodes[0]);
+    }
+    else if (event.nodes.length > 1) {
+        console.log("Clicked multiple nodes, what should I do?"); // TODO
+    }
+    else if (event.edges.length) {
+        console.log("Clicks on edges not handled yet."); // TODO
+    }
+    else {
+        request_add_node(event.pointer.canvas.x, event.pointer.canvas.y);
+    }
+
 }
 
 /* If a node has been clicked, select it.
  * If an other node was already selected, add an edge between the two. */
-function on_click_node(event) {
-    if (!edit_mode)
-        return;
-    var node = event.data.node;
+function on_click_node(node) {
     if (typeof selected_node == "undefined") {
         selected_node = node;
     }
     else {
-        request_add_edge(selected_node.id, node.id);
+        request_add_edge(selected_node, node);
         selected_node = undefined;
     }
 }
@@ -47,14 +54,16 @@ function request_redraw_graph(ws) {
     ws.send("request_redraw_graph");
 }
 function redraw_graph(new_graph) {
-    graph = new_graph;
-    for (var node of graph.nodes) {
-        S.graph.addNode(node);
-    }
-    for (var edge of graph.edges) {
-        S.graph.addEdge(edge);
-    }
-    S.refresh();
+    graph = {
+        nodes: new vis.DataSet(new_graph.nodes),
+        edges: new vis.DataSet(new_graph.edges),
+    };
+    var options = {};
+    network = new vis.Network(
+            document.getElementById("graph-editor"),
+            graph,
+            options);
+    bind_vis_events();
 }
 
 function request_add_node(x, y) {
@@ -63,22 +72,19 @@ function request_add_node(x, y) {
      * sends the actual edge. */
 }
 function add_node(node) {
-    S.graph.addNode(node);
-    S.refresh();
+    graph.nodes.add(node);
 }
 function remove_node(node) {
-    S.graph.dropNode(node);
-    S.refresh();
+    graph.nodes.remove(node);
 }
 
-function request_add_edge(source, target) {
-    ws.send("request_add_edge " + JSON.stringify({"source": source, "target": target}));
+function request_add_edge(from, to) {
+    ws.send("request_add_edge " + JSON.stringify({"from": from, "to": to}));
     /* TODO: Create temporary edge to be shown until the server
      * sends the actual edge. */
 }
 function add_edge(edge) {
-    S.graph.addEdge(edge);
-    S.refresh();
+    graph.edges.add(edge);
 }
 
 /************************************************
@@ -167,17 +173,6 @@ function on_socket_event(event) {
 }
 
 function main() {
-    S = new sigma({
-        renderer: {
-            container: document.getElementById("graph-editor"),
-            type: "canvas"
-        },
-        settings: {
-            enableCamera: false,
-            autoRescale: false,
-            minArrowSize: 5
-            }});
-    bind_sigma_events();
     ws = new WebSocket(websocket_url);
     ws.onopen = function (event) { request_redraw_graph(ws); };
     ws.onmessage = on_socket_event;
