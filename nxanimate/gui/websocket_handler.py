@@ -96,3 +96,11 @@ class WebSocketHandler(WebSocket):
         else:
             self.send('add_breakpoint', lineno)
             self.controller.add_breakpoint(lineno)
+
+    @expose
+    def move_nodes(self, nodes):
+        for (node, pos) in nodes.items():
+            assert isinstance(pos['x'], (int, float))
+            assert isinstance(pos['y'], (int, float))
+            self.controller.graph.add_node(node,
+                    x=pos['x'], y=pos['y'])

@@ -13,6 +13,7 @@ var current_line = undefined;
 
 function bind_vis_events() {
     network.on("click", on_click);
+    network.on("stabilized", on_stabilized);
 }
 
 function on_click(event) {
@@ -43,6 +44,11 @@ function on_click_node(node) {
         request_add_edge(selected_node, node);
         selected_node = undefined;
     }
+}
+
+function on_stabilized(event) {
+    var coordinates = network.getPositions();
+    ws.send("move_nodes " + JSON.stringify(coordinates));
 }
 
 
