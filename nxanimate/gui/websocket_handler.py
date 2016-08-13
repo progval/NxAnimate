@@ -15,6 +15,9 @@ class WebSocketHandler(WebSocket):
         controller.add_gui(self)
 
     def send(self, method, arg):
+        if self.stream is None:
+            self.controller.remove_gui(self)
+            return
         content = method + ' ' + json.dumps(arg)
         print('Sent message: {}'.format(content))
         super().send(content)

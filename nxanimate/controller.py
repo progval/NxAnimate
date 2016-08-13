@@ -22,6 +22,9 @@ class Controller:
     def add_gui(self, gui):
         self.guis.append(gui)
 
+    def remove_gui(self, gui):
+        self.guis.remove(gui)
+
     def load_graph(self):
         self.graph = g = networkx.Graph()
         g.add_node('foo', x=100, y=100)
