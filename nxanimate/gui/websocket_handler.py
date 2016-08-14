@@ -102,5 +102,8 @@ class WebSocketHandler(WebSocket):
         for (node, pos) in nodes.items():
             assert isinstance(pos['x'], (int, float))
             assert isinstance(pos['y'], (int, float))
-            self.controller.graph.add_node(node,
-                    x=pos['x'], y=pos['y'])
+            if self.controller.graph.has_node(node):
+                # move_nodes is called after deleting a node.
+                attrs = self.controller.graph.node[node]
+                attrs['x'] = pos['x']
+                attrs['y'] = pos['y']
