@@ -92,6 +92,9 @@ function request_add_edge(from, to) {
 function add_edge(edge) {
     graph.edges.add(edge);
 }
+function remove_edge(edge) {
+    graph.edges.remove(edge);
+}
 
 /************************************************
  * Debugger
@@ -163,6 +166,9 @@ function on_socket_event(event) {
             break;
         case "add_edge":
             add_edge(argument);
+            break;
+        case "remove_edge":
+            remove_edge(argument);
             break;
         case "set_lineno":
             on_set_lineno(argument);

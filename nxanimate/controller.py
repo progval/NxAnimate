@@ -34,7 +34,7 @@ class Controller:
         g.add_edge('foo', 'baz')
 
     def get_source_code(self):
-        return 'print("a")\nG.add_node(42)\nprint("b")\nG.remove_node(42)\nprint("c")\nprint("d")\nfor x in range(10):\n    print(x)\n'
+        return 'print("a")\nG.add_node(42)\nprint("b")\nG.remove_node(42)\nprint("c")\nG.add_edge("bar", "baz")\nG.remove_edge("bar", "baz")\nprint("d")\nfor x in range(10):\n    print(x)\n'
 
 
     #####################################
@@ -121,3 +121,17 @@ class Controller:
         else:
             for gui in self.guis:
                 gui.remove_node(id_)
+
+    def on_dbg_add_edge(self, graph, from_, to, key, attrs):
+        if graph is not self.graph:
+            return
+        else:
+            for gui in self.guis:
+                gui.add_edge(from_, to, key)
+
+    def on_dbg_remove_edge(self, graph, from_, to, key):
+        if graph is not self.graph:
+            return
+        else:
+            for gui in self.guis:
+                gui.remove_edge(from_, to, key)

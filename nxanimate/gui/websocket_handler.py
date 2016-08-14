@@ -62,17 +62,23 @@ class WebSocketHandler(WebSocket):
     def remove_node(self, id_):
         self.send('remove_node', id_)
 
+    def add_edge(self, from_, to, key):
+        id_ = get_edge_id(from_, to, key)
+        self.send('add_edge', {'from': from_, 'to': to, 'key': key, 'id': id_})
+
+    def remove_edge(self, from_, to, key):
+        self.send('remove_edge', get_edge_id(from_, to, key))
+
     @expose
     def request_add_edge(self, arg):
         assert isinstance(arg, dict)
         graph = self.controller.graph
-        print(arg)
         from_ = arg.pop('from')
         to = arg.pop('to')
         res = self.controller.add_edge(from_, to)
-        if res is not None:
+        if res is not None: # The edge does not already exist
             (key, attrs) = res
-            self.send('add_edge', serialize_edge(from_, to, key, attrs))
+            self.add_edge(from_, to, id_)
 
     @expose
     def step(self, arg):

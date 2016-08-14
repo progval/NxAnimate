@@ -8,12 +8,12 @@ def new_edge_id():
     return _last_edge_id
 _edge_ids = collections.defaultdict(new_edge_id)
 
-def make_edge_id(from_, to, key):
+def get_edge_id(from_, to, key):
     return _edge_ids[(from_, to, key)]
 
 '''
-def make_edge_id(from_, to, key):
-    """Make a sigma.js edge id (int) from_ a NetworkX edge id
+def get_edge_id(from_, to, key):
+    """Make a visjs edge id (int) from_ a NetworkX edge id
     ((from_, to, key)).
     This function is determinist and injective."""
     shift = max(from_, to, key).bit_length()
@@ -38,7 +38,7 @@ def get_graph_edges_with_keys(graph):
 def serialize_edge(from_, to, key, attrs):
     d = attrs.copy()
     d.update({
-            'id': make_edge_id(from_, to, key),
+            'id': get_edge_id(from_, to, key),
             'from': from_,
             'to': to,
             'key': key,
