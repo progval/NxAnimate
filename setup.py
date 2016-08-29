@@ -19,9 +19,9 @@ setup(
                 ],
             },
         requires=[
-            'networkx',
+            'networkx (>=2.0)',
             'ws4py',
-            'cherrypy',
+            'cherrypy (>=3.5)',
             'pygments (>=1.6)',
             ],
         classifiers=[
