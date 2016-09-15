@@ -59,6 +59,9 @@ class WebSocketHandler(WebSocket):
     def add_node(self, id_, x, y):
         self.send('add_node', serialize_node(id_, {'x': x, 'y': y}))
 
+    def update_node(self, id_, attrs):
+        self.send('update_node', serialize_node(id_, attrs))
+
     def remove_node(self, id_):
         self.send('remove_node', id_)
 
@@ -111,5 +114,7 @@ class WebSocketHandler(WebSocket):
             if self.controller.graph.has_node(node):
                 # move_nodes is called after deleting a node.
                 attrs = self.controller.graph.node[node]
-                attrs['x'] = pos['x']
-                attrs['y'] = pos['y']
+
+                # Use .data, so updates don't go in a client-server loop
+                attrs.data['x'] = pos['x']
+                attrs.data['y'] = pos['y']

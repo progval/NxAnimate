@@ -80,6 +80,9 @@ function request_add_node(x, y) {
 function add_node(node) {
     graph.nodes.add(node);
 }
+function update_node(nodes) {
+    graph.nodes.update(nodes);
+}
 function remove_node(node) {
     graph.nodes.remove(node);
 }
@@ -160,6 +163,9 @@ function on_socket_event(event) {
             break;
         case "add_node":
             add_node(argument);
+            break;
+        case "update_node":
+            update_node(argument);
             break;
         case "remove_node":
             remove_node(argument);

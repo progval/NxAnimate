@@ -21,11 +21,11 @@ def get_edge_id(from_, to, key):
 '''
 
 def serialize_node(id_, attrs):
-    d = attrs.copy()
-    d.update({
+    d = {
             'id': id_,
             'size': 10,
-            })
+            }
+    d.update(attrs)
     return d
 
 def get_graph_edges_with_keys(graph):

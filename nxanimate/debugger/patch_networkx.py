@@ -23,6 +23,25 @@ def magically_get_debugger():
     raise ValueError(
             'magically_get_debugger() was not called from a debugged script.')
 
+class AttrsDict(collections.UserDict):
+    def __init__(self, data, graph, controller, node_id):
+        super().__init__()
+        self.data = data
+        self._graph = graph
+        self._controller = controller
+        self._node_id = node_id
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+        self._controller.on_dbg_set_node_attribute(self._graph,
+                self._node_id, key, value)
+
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        self._controller.on_dbg_del_node_attribute(self._graph,
+                self._node_id, key)
+
+
 class NodeDict(collections.UserDict):
     def __init__(self):
         super().__init__()
@@ -32,14 +51,16 @@ class NodeDict(collections.UserDict):
             raise ValueError(
                     'NodeDict may only be instantiated from a Graph.')
 
-    def __setitem__(self, key, value):
-        super().__setitem__(key, value)
-        self._controller.on_dbg_add_node(self._graph, key, value)
+    def __setitem__(self, id_, attrs):
+        if not isinstance(attrs, AttrsDict):
+            attrs = AttrsDict(attrs, self._graph, self._controller, id_)
+        super().__setitem__(id_, attrs)
+        self._controller.on_dbg_add_node(self._graph, id_, attrs)
 
-    def __delitem__(self, key):
-        super().__delitem__(key)
+    def __delitem__(self, id_):
+        super().__delitem__(id_)
         # The controller won't be called if the key does not exist (on purpose)
-        self._controller.on_dbg_remove_node(self._graph, key)
+        self._controller.on_dbg_remove_node(self._graph, id_)
 
 
 class OuterEdgeDict(collections.UserDict):

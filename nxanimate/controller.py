@@ -34,7 +34,7 @@ class Controller:
         g.add_edge('foo', 'baz')
 
     def get_source_code(self):
-        return 'print("a")\nG.add_node(42)\nprint("b")\nG.remove_node(42)\nprint("c")\nG.add_edge("bar", "baz")\nG.remove_edge("bar", "baz")\nprint("d")\nfor x in range(10):\n    print(x)\n'
+        return 'print("a")\nG.add_node(42)\nprint("b")\nG.remove_node(42)\nprint("c")\nG.add_edge("bar", "baz")\nG.remove_edge("bar", "baz")\nprint("d")\nfor (n, data) in G.nodes(data=True):\n    print(n)\n    data["color"] = {"border": "red"}\n'
 
 
     #####################################
@@ -114,6 +114,16 @@ class Controller:
                 self.graph.node[id_]['y'] = y
             for gui in self.guis:
                 gui.add_node(id_, x, y)
+
+    def on_dbg_set_node_attribute(self, graph, id_, key, value):
+        if graph is not self.graph:
+            return
+        else:
+            for gui in self.guis:
+                gui.update_node(id_, {key: value})
+
+    def on_dbg_del_node_attribute(self, graph, id_, key):
+        raise NotImplementedError('Deleting node attribute')
 
     def on_dbg_remove_node(self, graph, id_):
         if graph is not self.graph:
