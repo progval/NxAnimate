@@ -1,5 +1,6 @@
 import os.path
 import functools
+import configparser
 
 import cherrypy
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
@@ -7,10 +8,8 @@ from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from .highlighting import highlight, get_highlight_css
 from .websocket_handler import WebSocketHandler
 
-PORT = 8000
 RESOURCES_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'client-resources')
 
-cherrypy.config.update({'server.socket_port': PORT})
 WebSocketPlugin(cherrypy.engine).subscribe()
 cherrypy.tools.websocket = WebSocketTool()
 
@@ -35,7 +34,8 @@ class Root(object):
     @cherrypy.expose('config.js')
     def config(self):
         cherrypy.response.headers['Content-Type'] = 'text/javascript'
-        return 'websocket_url = "ws://localhost:{}/websocket";'.format(PORT).encode()
+        host = cherrypy.request.headers['Host']
+        return 'websocket_url = "ws://{}/websocket";'.format(host).encode()
 
     @cherrypy.expose
     def websocket(self):
@@ -43,8 +43,10 @@ class Root(object):
         handler = cherrypy.request.ws_handler
 
 
-def gen_config(*, controller):
-    return {
+def gen_default_config(*, controller):
+    default_config = {
+            '/': {
+                },
             '/static': {
                 'tools.staticdir.on': True,
                 'tools.staticdir.dir': RESOURCES_PATH,
@@ -57,6 +59,15 @@ def gen_config(*, controller):
                             ),
                 },
             }
+    return default_config
+
+    parser = configparser.ConfigParser()
+    for (section, values) in default_config.items():
+        parser[section] = values
+    return {k: dict(v) for (k,v) in parser.items()}
 
 def start(controller, config=None):
-    cherrypy.quickstart(Root(controller), '/', config=config)
+    app = cherrypy.Application(Root(controller))
+    app.merge(gen_default_config(controller=controller))
+
+    cherrypy.quickstart(app, '/', config=config)
