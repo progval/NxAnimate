@@ -39,8 +39,7 @@ class Root(object):
 
     @cherrypy.expose
     def websocket(self):
-        # you can access the class instance through
-        handler = cherrypy.request.ws_handler
+        pass
 
 
 def gen_default_config(*, controller):

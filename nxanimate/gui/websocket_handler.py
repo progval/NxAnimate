@@ -2,7 +2,8 @@ import json
 
 from ws4py.websocket import WebSocket
 
-from .serialization import *
+from .serialization import serialize_graph, serialize_node, \
+        get_edge_id
 
 def expose(f):
     f.exposed = True
@@ -51,10 +52,10 @@ class WebSocketHandler(WebSocket):
     @expose
     def request_add_node(self, arg):
         assert isinstance(arg, dict)
-        graph = self.controller.graph
         x = arg.pop('x')
         y = arg.pop('y')
         id_ = self.controller.add_node(x, y)
+        return id_
 
     def add_node(self, id_, x, y):
         self.send('add_node', serialize_node(id_, {'x': x, 'y': y}))
@@ -75,7 +76,6 @@ class WebSocketHandler(WebSocket):
     @expose
     def request_add_edge(self, arg):
         assert isinstance(arg, dict)
-        graph = self.controller.graph
         from_ = arg.pop('from')
         to = arg.pop('to')
         res = self.controller.add_edge(from_, to)

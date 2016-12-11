@@ -1,7 +1,6 @@
 import io
 
 import pygments
-from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 
@@ -21,7 +20,6 @@ class Formatter(HtmlFormatter):
         mw = len(str(lncount + fl - 1))
         sp = self.linenospecial
         st = self.linenostep
-        la = self.lineanchors
         aln = self.anchorlinenos
         nocls = self.noclasses
         assert not sp # Stripped that code

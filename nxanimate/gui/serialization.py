@@ -1,4 +1,3 @@
-import json
 import collections
 
 _last_edge_id = -1
