@@ -105,8 +105,8 @@ class Controller:
                     y_list = list(map(operator.itemgetter(1), graph.nodes('x')))
                     x_list.remove(None) # the x value of the new node
                     y_list.remove(None) # the y value of the new node
-                    x = random.randrange(min(x_list), max(x_list))
-                    y = random.randrange(min(y_list), max(y_list))
+                    x = random.uniform(min(x_list), max(x_list))
+                    y = random.uniform(min(y_list), max(y_list))
                 else:
                     x = random.randrange(0, 10)
                     y = random.randrange(0, 10)

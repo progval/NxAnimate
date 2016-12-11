@@ -81,7 +81,7 @@ class WebSocketHandler(WebSocket):
         res = self.controller.add_edge(from_, to)
         if res is not None: # The edge does not already exist
             (key, attrs) = res
-            self.add_edge(from_, to, id_)
+            self.add_edge(from_, to, key)
 
     @expose
     def step(self, arg):
