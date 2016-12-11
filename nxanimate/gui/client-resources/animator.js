@@ -8,7 +8,7 @@ var selected_node = undefined; /* Candidate as edge source. */
 var current_line = undefined;
 
 /************************************************
- * Sigma events
+ * vis.js events
  ************************************************/
 
 function bind_vis_events() {
@@ -103,9 +103,9 @@ function remove_edge(edge) {
  * Debugger
  ************************************************/
 
-function on_click_lineno() {
+function on_click_lineno(event) {
     /* Find which of the line numbers was clicks */
-    var element = window.event.target;
+    var element = event.target;
     var tokens = element.id.split("-");
     var prefix=tokens[0], lineno_str=tokens[1];
     if (prefix != "lineno") {
@@ -194,4 +194,5 @@ function main() {
     ws = new WebSocket(websocket_url);
     ws.onopen = function (event) { request_redraw_graph(ws); };
     ws.onmessage = on_socket_event;
+    document.getElementById("linenos").addEventListener("click", on_click_lineno);
 }

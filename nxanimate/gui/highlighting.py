@@ -37,7 +37,7 @@ class Formatter(HtmlFormatter):
 
         assert not nocls # Stripped that code
         yield 0, ('<table class="%stable">' % self.cssclass +
-                  '<tr><td class="linenos" onclick="on_click_lineno();"><div class="linenodiv"><pre>' +
+                  '<tr><td class="linenos" id="linenos"><div class="linenodiv"><pre>' +
                   ls + '</pre></div></td><td class="code">')
         yield 0, dummyoutfile.getvalue()
         yield 0, '</td></tr></table>'
