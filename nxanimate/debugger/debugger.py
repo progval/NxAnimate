@@ -21,6 +21,10 @@ class NxAnimateBdb(bdb.Bdb):
             self._line_callback(frame.f_lineno)
             self.continue_execution.wait() # Wait before going to the next line
 
+    def user_return(self, frame, arg):
+        self._line_callback(None)
+
+
 class Debugger:
     def __init__(self, file_name, controller):
         self._file_name = file_name
