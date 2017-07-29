@@ -191,8 +191,14 @@ function on_socket_event(event) {
     }
 }
 
+function websocket_url() {
+    var loc = window.location;
+    return "ws" + (loc.protocol === "https:" ? "s" : "") +
+           "://" + loc.host + loc.pathname + "/websocket";
+}
+
 function main() {
-    ws = new WebSocket(websocket_url);
+    ws = new WebSocket(websocket_url());
     ws.onopen = function (event) { request_redraw_graph(ws); };
     ws.onmessage = on_socket_event;
     document.getElementById("edit-mode-off").checked = true;

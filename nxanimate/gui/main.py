@@ -31,12 +31,6 @@ class Root(object):
         cherrypy.response.headers['Content-Type'] = 'text/css'
         return get_highlight_css()
 
-    @cherrypy.expose('config.js')
-    def config(self):
-        cherrypy.response.headers['Content-Type'] = 'text/javascript'
-        host = cherrypy.request.headers['Host']
-        return 'websocket_url = "ws://{}/websocket";'.format(host).encode()
-
     @cherrypy.expose
     def websocket(self):
         pass
