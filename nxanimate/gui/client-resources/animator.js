@@ -91,6 +91,7 @@ function request_add_edge(from, to) {
     ws.send("request_add_edge " + JSON.stringify({"from": from, "to": to}));
     /* TODO: Create temporary edge to be shown until the server
      * sends the actual edge. */
+    network.unselectAll();
 }
 function add_edge(edge) {
     graph.edges.add(edge);
