@@ -13,6 +13,10 @@ def magically_get_debugger():
     this function."""
     frame = sys._getframe().f_back
     while frame:
+        debugger = frame.f_globals.get('__NxAnimate_debugger', None)
+        if debugger is not None:
+            assert isinstance(debugger, Debugger)
+            return debugger
         if 'self' in frame.f_locals:
             obj = frame.f_locals['self']
             if isinstance(obj, Debugger):
