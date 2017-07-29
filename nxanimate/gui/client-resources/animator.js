@@ -195,5 +195,6 @@ function main() {
     ws = new WebSocket(websocket_url);
     ws.onopen = function (event) { request_redraw_graph(ws); };
     ws.onmessage = on_socket_event;
+    document.getElementById("edit-mode-off").checked = true;
     document.getElementById("linenos").addEventListener("click", on_click_lineno);
 }
