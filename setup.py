@@ -9,7 +9,7 @@ setup(
         author='Valentin Lorentz',
         author_email='progval+nxanimate@progval.net',
         url='https://github.com/ProgVal/NxAnimate',
-        packages=['nxanimate', 'nxanimate.gui'],
+        packages=['nxanimate', 'nxanimate.gui', 'nxanimate.animations'],
         package_data={
             'nxanimate.gui': [
                 'client-resources/animator.js',

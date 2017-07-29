@@ -14,7 +14,7 @@ class Controller:
         self.script.write(self.get_source_code())
         self.script.flush()
         self.debugger = Debugger(self.script.name, self)
-        self.load_graph()
+        self.graph = networkx.Graph()
 
     def __del__(self):
         self.script.close()
@@ -25,16 +25,26 @@ class Controller:
     def remove_gui(self, gui):
         self.guis.remove(gui)
 
-    def load_graph(self):
-        self.graph = g = networkx.Graph()
-        g.add_node('foo', x=100, y=100)
-        g.add_node('bar', x=200, y=100)
-        g.add_node('baz', x=100, y=200)
-        g.add_edge('foo', 'bar')
-        g.add_edge('foo', 'baz')
-
     def get_source_code(self):
-        return 'print("a")\nG.add_node(42)\nprint("b")\nG.remove_node(42)\nprint("c")\nG.add_edge("bar", "baz")\nG.remove_edge("bar", "baz")\nprint("d")\nfor (n, data) in G.nodes(data=True):\n    print(n)\n    data["color"] = {"border": "red"}\n'
+        return '''import networkx as nx
+import nxanimate.animations as nxa
+G = nx.erdos_renyi_graph(10, 1/3)
+print(1)
+nxa.use_graph(G)
+print(2)
+
+print("a")
+G.add_node(42)
+print("b")
+G.remove_node(42)
+print("c")
+G.add_edge("bar", "baz")
+G.remove_edge("bar", "baz")
+print("d")
+for (n, data) in G.nodes(data=True):
+    print(n)
+    data["color"] = {"border": "red"}
+'''
 
 
     #####################################
@@ -82,6 +92,12 @@ class Controller:
     #####################################
     # Called from debugger
 
+    def on_dbg_new_graph(self, graph):
+        print('new graph2')
+        self.graph = graph
+        for gui in self.guis:
+            gui.request_redraw_graph(None)
+
     def on_dbg_line(self, lineno):
         for gui in self.guis:
             gui.set_line(lineno)
@@ -94,20 +110,23 @@ class Controller:
                 assert 'x' in attrs and 'y' in attrs
                 x = attrs['x']
                 y = attrs['y']
+                self.graph.add_node(id_, x=x, y=y)
             else:
-                if self.graph.number_of_nodes() >= 2:
-                    # Select a random point in the minimum bounding rectangle,
-                    # because it is (hopefully) included in the screen.
-                    x_list = list(map(operator.itemgetter(1), graph.nodes('x')))
-                    y_list = list(map(operator.itemgetter(1), graph.nodes('x')))
-                    x_list.remove(None) # the x value of the new node
-                    y_list.remove(None) # the y value of the new node
-                    x = random.uniform(min(x_list), max(x_list))
-                    y = random.uniform(min(y_list), max(y_list))
+                # Select a random point in the minimum bounding rectangle,
+                # because it is (hopefully) included in the screen.
+                x_set = {x for (n,x) in graph.nodes('x')}
+                y_set = {y for (n,y) in graph.nodes('y')}
+                x_set.remove(None) # the x value of the new node
+                y_set.remove(None) # the y value of the new node
+                if len(x_set) >= 2 and len(y_set) >= 2:
+                    x = random.uniform(min(x_set), max(x_list))
+                    y = random.uniform(min(y_set), max(y_list))
                 else:
                     x = random.randrange(0, 10)
                     y = random.randrange(0, 10)
-            self.graph.add_node(id_, x=x, y=y)
+                self.graph.add_node(id_, x=x, y=y)
+                self.graph.node[id_][x] = x
+                self.graph.node[id_][y] = y
 
     def on_dbg_set_node_attribute(self, graph, id_, key, value):
         if graph is not self.graph:

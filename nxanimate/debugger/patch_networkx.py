@@ -5,27 +5,10 @@ import collections
 
 import networkx as nx
 
+from . import magic
 from .debugger import Debugger
 from ..controller import Controller
 
-def magically_get_debugger():
-    """Browse the call stack to find the controller of the script calling
-    this function."""
-    frame = sys._getframe().f_back
-    while frame:
-        debugger = frame.f_globals.get('__NxAnimate_debugger', None)
-        if debugger is not None:
-            assert isinstance(debugger, Debugger)
-            return debugger
-        if 'self' in frame.f_locals:
-            obj = frame.f_locals['self']
-            if isinstance(obj, Debugger):
-                return obj
-            elif isinstance(obj, Controller):
-                return obj.debugger
-        frame = frame.f_back
-    raise ValueError(
-            'magically_get_debugger() was not called from a debugged script.')
 
 class AttrsDict(collections.UserDict):
     def __init__(self, data, graph, controller, node_id):
@@ -50,7 +33,7 @@ class NodeDict(collections.UserDict):
     def __init__(self):
         super().__init__()
         self._graph = sys._getframe().f_back.f_locals['self']
-        self._controller = magically_get_debugger().controller
+        self._controller = magic.get_debugger().controller
         if not isinstance(self._graph, nx.Graph):
             raise ValueError(
                     'NodeDict may only be instantiated from a Graph.')
@@ -71,7 +54,7 @@ class OuterEdgeDict(collections.UserDict):
     def __init__(self):
         super().__init__()
         self._graph = sys._getframe().f_back.f_locals['self']
-        self._controller = magically_get_debugger().controller
+        self._controller = magic.get_debugger().controller
         if not isinstance(self._graph, nx.Graph):
             raise ValueError(
                     'InnerEdgeDict may only be instantiated from a Graph.')
