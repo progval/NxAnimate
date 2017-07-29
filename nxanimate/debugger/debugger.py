@@ -9,6 +9,7 @@ class NxAnimateBdb(bdb.Bdb):
         self.stepping = True
         self.continue_execution = release_line
         self._line_callback = line_callback
+        self.previous_line = None
 
     def is_skipped_module(self, module_name):
         return module_name.startswith('nxanimate.script')
@@ -18,11 +19,14 @@ class NxAnimateBdb(bdb.Bdb):
             return
         self.continue_execution.clear()
         if self.stepping or self.break_here(frame):
+            self.previous_line = frame.f_lineno
             self._line_callback(frame.f_lineno)
             self.continue_execution.wait() # Wait before going to the next line
 
     def user_return(self, frame, arg):
-        self._line_callback(None)
+        if self.previous_line is not None:
+            self.previous_line = None
+            self._line_callback(None)
 
 
 class Debugger:

@@ -61,10 +61,7 @@ class Controller:
 
     def step(self):
         """Run a line of the script in the debugger."""
-        print('--')
-        print(list(self.graph.nodes()))
         self.debugger.step()
-        print(list(self.graph.nodes()))
 
     def continue_(self):
         """Run the script in the debugger, until a breakpoint is met."""
@@ -110,10 +107,7 @@ class Controller:
                 else:
                     x = random.randrange(0, 10)
                     y = random.randrange(0, 10)
-                self.graph.node[id_]['x'] = x
-                self.graph.node[id_]['y'] = y
-            for gui in self.guis:
-                gui.add_node(id_, x, y)
+            self.graph.add_node(id_, x=x, y=y)
 
     def on_dbg_set_node_attribute(self, graph, id_, key, value):
         if graph is not self.graph:
