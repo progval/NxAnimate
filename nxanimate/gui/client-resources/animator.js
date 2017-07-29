@@ -139,11 +139,17 @@ function on_click_next_breakpoint() {
 
 function on_set_lineno(arg) {
     var lineno = arg;
-    var line = document.getElementById("line-" + lineno);
     if (typeof current_line != "undefined") {
         current_line.classList.remove("highlighted-line");
     }
-    line.classList.add("highlighted-line");
+    if (lineno === null) {
+        /* Only unselect current line */
+        return;
+    }
+    else {
+        var line = document.getElementById("line-" + lineno);
+        line.classList.add("highlighted-line");
+    }
     current_line = line;
 }
 
